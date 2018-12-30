@@ -12,6 +12,8 @@ services:
       - bundle_cache
     environment:
       BUNDLE_PATH: /bundle_cache
+      DATABASE_HOST: db
+      DATABASE_USERNAME: postgres
   db:
     image: postgres:11.1-alpine
   bundle_cache:
