@@ -1,0 +1,20 @@
+version: '2'
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - .:/task_manager:cached
+    ports:
+      - 3000:3000
+    volumes_from:
+      - bundle_cache
+    environment:
+      BUNDLE_PATH: /bundle_cache
+  db:
+    image: postgres:11.1-alpine
+  bundle_cache:
+    image: busybox
+    volumes:
+      - /bundle_cache
