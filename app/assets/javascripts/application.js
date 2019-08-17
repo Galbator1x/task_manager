@@ -13,4 +13,3 @@
 //= require rails-ujs
 //= require activestorage
 //= require_tree .
-// = javascript_pack_tag 'application'
