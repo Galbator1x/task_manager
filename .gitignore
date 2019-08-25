@@ -17,6 +17,8 @@
 /storage/*
 !/storage/.keep
 
+.keep
+
 /node_modules
 /yarn-error.log
 
