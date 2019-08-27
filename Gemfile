@@ -18,7 +18,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'simple_form'
 gem 'state_machines'
 gem 'state_machines-activerecord'
-gem 'webpacker', '~> 3.5'
+gem 'webpacker', '~> 4.0'
 gem 'webpacker-react'
 
 group :development, :test do
