@@ -5,7 +5,7 @@ app-console:
 	docker-compose run --rm app bin/rails console
 
 app-bash:
-	docker-compose run --rm --service-ports app /bin/bash
+	docker-compose run --rm app /bin/bash
 
 
 app-build:
