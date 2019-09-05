@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Galbator1x/task_manager.svg?branch=develop)](https://travis-ci.org/Galbator1x/task_manager)
+
 # README
 
 This README would normally document whatever steps are necessary to get the
