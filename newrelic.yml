@@ -1,0 +1,26 @@
+common: &default_settings
+  license_key: <%= ENV['NEWRELIC_LICENSE_KEY'] %>
+
+  app_name: Task Manager
+
+  # To disable the agent regardless of other settings, uncomment the following:
+  # agent_enabled: false
+
+  log_level: info
+
+
+development:
+  <<: *default_settings
+  app_name: Task Manager (Development)
+
+test:
+  <<: *default_settings
+  # It doesn't make sense to report to New Relic from automated test runs.
+  monitor_mode: false
+
+staging:
+  <<: *default_settings
+  app_name: Task Manager (Staging)
+
+production:
+  <<: *default_settings

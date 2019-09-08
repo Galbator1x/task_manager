@@ -28,6 +28,7 @@ gem 'state_machines'
 gem 'state_machines-activerecord'
 gem 'coveralls', require: false
 
+gem 'newrelic_rpm'
 gem 'rollbar'
 
 group :development, :test do
