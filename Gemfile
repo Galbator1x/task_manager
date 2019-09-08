@@ -26,8 +26,12 @@ gem 'webpacker-react'
 
 gem 'state_machines'
 gem 'state_machines-activerecord'
-gem 'coveralls', require: false
+gem 'kaminari'
+gem 'ransack', github: 'activerecord-hackery/ransack'
+gem 'responders'
+gem 'active_model_serializers'
 
+gem 'coveralls', require: false
 gem 'newrelic_rpm'
 gem 'rollbar'
 
