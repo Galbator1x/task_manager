@@ -1,4 +1,6 @@
 class Web::SessionsController < Web::ApplicationController
+  respond_to :html
+
   def new
     @session = Session.new
   end
@@ -10,7 +12,7 @@ class Web::SessionsController < Web::ApplicationController
       sign_in @session.user
       redirect_to :board
     else
-      render :new
+      respond_with @session
     end
   end
 

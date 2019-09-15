@@ -1,4 +1,5 @@
 class Web::DevelopersController < Web::ApplicationController
+  respond_to :html
   def new
     @developer = Developer.new
   end
@@ -10,7 +11,7 @@ class Web::DevelopersController < Web::ApplicationController
       sign_in @developer
       redirect_to :board
     else
-      render :new
+      respond_with @developer
     end
   end
 

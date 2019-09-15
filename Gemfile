@@ -30,6 +30,7 @@ gem 'kaminari'
 gem 'ransack', github: 'activerecord-hackery/ransack'
 gem 'responders'
 gem 'active_model_serializers'
+gem 'draper'
 
 gem 'coveralls', require: false
 gem 'newrelic_rpm'

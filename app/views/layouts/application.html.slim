@@ -28,7 +28,7 @@ html lang='en'
           .col-lg-3
             ul.nav.navbar-nav
               -if current_user
-                li.navbar-text =current_user.name
+                li.navbar-text =current_user.decorate.name
                 li= link_to 'Log out', session_path, method: 'delete'
               -else
                 li= link_to 'Sign in', new_session_path
