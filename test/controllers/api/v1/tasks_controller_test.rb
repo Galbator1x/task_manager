@@ -36,7 +36,7 @@ class Api::V1::TasksControllerTest < ActionDispatch::IntegrationTest
       .merge(author_id: author.id, assignee_id: assignee.id)
       .stringify_keys
 
-    patch api_v1_tasks_path, params: { id: task.id, format: :json, task: task_attributes }
+    patch api_v1_task_path task.id, format: :json, params: { task: task_attributes }
     assert_response :success
 
     task.reload
