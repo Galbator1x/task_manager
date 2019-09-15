@@ -20,4 +20,20 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     task = Task.find(params[:id])
     respond_with task
   end
+
+  def create
+    task = current_user.my_tasks.new(task_params)
+
+    if task.save
+      respond_with task, location: nil
+    else
+      render json: { errors: task.errors }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def task_params
+    params.require(:task).permit(:name, :description, :author_id, :assignee_id, :state_event)
+  end
 end
