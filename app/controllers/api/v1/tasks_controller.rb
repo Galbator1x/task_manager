@@ -15,4 +15,9 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
     respond_with json
   end
+
+  def show
+    task = Task.find(params[:id])
+    respond_with task
+  end
 end
