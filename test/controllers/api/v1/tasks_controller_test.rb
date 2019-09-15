@@ -46,7 +46,7 @@ class Api::V1::TasksControllerTest < ActionDispatch::IntegrationTest
   test 'should delete destroy' do
     author = create :manager
     task = create :task, author: author
-    delete api_v1_tasks_path, params: { id: task.id, format: :json }
+    delete api_v1_task_path task.id, params: { format: :json }
     assert_response :success
 
     assert !Task.where(id: task.id).exists?
