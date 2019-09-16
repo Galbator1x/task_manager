@@ -1,5 +1,4 @@
 class Web::DevelopersController < Web::ApplicationController
-  respond_to :html
   def new
     @developer = Developer.new
   end

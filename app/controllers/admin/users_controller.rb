@@ -1,6 +1,4 @@
 class Admin::UsersController < Admin::ApplicationController
-  respond_to :html
-
   def show
     @user = User.find(params[:id])
   end
@@ -19,21 +17,14 @@ class Admin::UsersController < Admin::ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
-      redirect_to admin_users_url
-    else
-      respond_with @user
-    end
+    @user = User.create(user_params)
+    respond_with @user, location: admin_users_url
   end
 
   def update
     @user = User.find(params[:id])
-    if @user.update(user_params)
-      redirect_to admin_users_url
-    else
-      respond_with @user
-    end
+    @user.update(user_params)
+    respond_with @user, location: admin_users_url
   end
 
   def destroy

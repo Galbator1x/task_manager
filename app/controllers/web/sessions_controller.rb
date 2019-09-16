@@ -1,6 +1,4 @@
 class Web::SessionsController < Web::ApplicationController
-  respond_to :html
-
   def new
     @session = Session.new
   end
