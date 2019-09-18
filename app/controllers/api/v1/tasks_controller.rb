@@ -9,8 +9,8 @@ class Api::V1::TasksController < Api::V1::ApplicationController
       .per(params[:per_page])
 
     json = {
-      items: tasks.map { |t| TaskSerializer.new(t).as_json },
-      meta: build_meta_tasks(tasks)
+      items: serialize(tasks, TaskSerializer),
+      meta: build_meta(tasks)
     }
 
     respond_with json
@@ -27,7 +27,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     if task.save
       respond_with task, location: nil
     else
-      render json: { errors: task.errors }, status: :unprocessable_entity
+      respond_with json: { errors: task.errors }, status: :unprocessable_entity
     end
   end
 
@@ -37,7 +37,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     if task.update(task_params)
       respond_with task
     else
-      render json: { errors: task.errors }, status: :unprocessable_entity
+      respond_with json: { errors: task.errors }, status: :unprocessable_entity
     end
   end
 
@@ -46,7 +46,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
     if task.destroy
       head :ok
     else
-      render json: { errors: task.errors }, status: :unprocessable_entity
+      respond_with json: { errors: task.errors }, status: :unprocessable_entity
     end
   end
 
