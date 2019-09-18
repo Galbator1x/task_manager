@@ -1,0 +1,14 @@
+= simple_form_for @user, as: :user, url: url do |f|
+  .row
+    .col-lg-1
+      = f.button :submit, 'Back', formaction: formaction_url, formmethod: 'get'
+    .col-lg-11
+      h4
+        = header
+  p
+  = f.input :first_name
+  = f.input :last_name
+  = f.input :email
+  = f.input :password
+  = f.input :type, as: :select, collection: ['Admin', 'Manager', 'Developer']
+  = f.button :submit, submit_text

@@ -10,7 +10,7 @@ class Web::SessionsController < Web::ApplicationController
       sign_in @session.user
       redirect_to :board
     else
-      render :new
+      respond_with @session
     end
   end
 

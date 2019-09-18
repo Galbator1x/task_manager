@@ -6,5 +6,5 @@ class User < ApplicationRecord
 
   validates :first_name, presence: true, length: { minimum: 2 }
   validates :last_name, presence: true, length: { minimum: 2 }
-  validates :email, presence: true, uniqueness: true, format: { with: /.*@.*/ }
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 end

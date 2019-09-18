@@ -10,7 +10,7 @@ class Web::DevelopersController < Web::ApplicationController
       sign_in @developer
       redirect_to :board
     else
-      render :new
+      respond_with @developer
     end
   end
 
