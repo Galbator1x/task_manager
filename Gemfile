@@ -23,6 +23,7 @@ gem 'therubyracer'
 gem 'twitter-bootstrap-rails'
 gem 'webpacker', '~> 4.0'
 gem 'webpacker-react'
+gem 'js-routes'
 
 gem 'state_machines'
 gem 'state_machines-activerecord'
