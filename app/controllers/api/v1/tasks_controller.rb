@@ -2,15 +2,16 @@ class Api::V1::TasksController < Api::V1::ApplicationController
   def index
     q_params = params[:q] || { s: 'id asc' }
 
-    tasks = Task.all
+    tasks = Task
       .ransack(q_params)
       .result
       .page(params[:page])
       .per(params[:per_page])
 
     json = {
-      items: serialize(tasks, TaskSerializer),
-      meta: build_meta(tasks)
+      items: tasks,
+      meta: build_meta(tasks),
+      each_serializer: TaskSerializer
     }
 
     respond_with json
@@ -18,36 +19,24 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   def show
     task = Task.find(params[:id])
-    respond_with task
+    respond_with task, serializer: TaskSerializer
   end
 
   def create
-    task = current_user.my_tasks.new(task_params)
-
-    if task.save
-      respond_with task, location: nil
-    else
-      respond_with json: { errors: task.errors }, status: :unprocessable_entity
-    end
+    task = current_user.my_tasks.create(task_params)
+    respond_with task, location: nil
   end
 
   def update
     task = Task.find(params[:id])
-
-    if task.update(task_params)
-      respond_with task
-    else
-      respond_with json: { errors: task.errors }, status: :unprocessable_entity
-    end
+    task.update(task_params)
+    respond_with task, location: nil
   end
 
   def destroy
     task = Task.find(params[:id])
-    if task.destroy
-      head :ok
-    else
-      respond_with json: { errors: task.errors }, status: :unprocessable_entity
-    end
+    task.destroy
+    respond_with :ok, location: nil
   end
 
   private
