@@ -10,3 +10,12 @@ admin.save
   u.password = i.to_s
   u.save
 end
+
+author = Manager.find_or_create_by(email: 'bob.manager@localhost.com', first_name: 'Bob', last_name: 'Manager')
+author.password = '123456'
+author.save
+
+20.times do |i|
+  state = %i[new_task in_development in_qa in_code_review ready_for_release released archived].sample
+  Task.create(name: "Task #{i}", description: "Description #{i}", author: author, state: state)
+end
