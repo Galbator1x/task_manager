@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
-import Board from 'react-trello'
+import React, { Component } from 'react';
+import Board from 'react-trello';
 
-import { fetch } from './Fetch'
+import { fetch } from './Fetch';
+import LaneHeader from './LaneHeader';
 
 export default class TasksBoard extends Component {
   state = {
@@ -13,6 +14,18 @@ export default class TasksBoard extends Component {
       ready_for_release: null,
       released: null,
       archived: null
+    }
+  }
+
+  lanesMapping() {
+    return {
+      'new_task': { name: 'New', state_event: '' },
+      'in_development': { name: 'In Dev', state_event: 'to_development' },
+      'in_qa': { name: 'In QA', state_event: 'to_qa' },
+      'in_code_review': { name: 'in CR', state_event: 'to_code_review' },
+      'ready_for_release': { name: 'Ready for release', state_event: 'to_ready_for_release' },
+      'released': { name: 'Released', state_event: 'release' },
+      'archived': { name: 'Archived', state_event: 'archive' },
     }
   }
 
@@ -34,27 +47,18 @@ export default class TasksBoard extends Component {
   }
 
   getBoard() {
-    return {
-      lanes: [
-        this.generateLane('new_task', 'New'),
-        this.generateLane('in_development', 'In Dev'),
-        this.generateLane('in_qa', 'In QA'),
-        this.generateLane('in_code_review', 'in CR'),
-        this.generateLane('ready_for_release', 'Ready for release'),
-        this.generateLane('released', 'Released'),
-        this.generateLane('archived', 'Archived'),
-      ],
-    };
+    const { lanesMapping } = this;
+    const lanes = Object.keys(lanesMapping()).map(key =>
+      this.generateLane(key, lanesMapping()[key].name)
+    );
+    return { lanes };
   }
 
   loadLines() {
-    this.loadLine('new_task');
-    this.loadLine('in_development');
-    this.loadLine('in_qa');
-    this.loadLine('in_code_review');
-    this.loadLine('ready_for_release');
-    this.loadLine('released');
-    this.loadLine('archived');
+    const { lanesMapping } = this;
+    const lanes = Object.keys(lanesMapping()).map(key =>
+      this.loadLine(key)
+    );
   }
 
   componentDidMount() {
@@ -80,11 +84,43 @@ export default class TasksBoard extends Component {
     })
   }
 
+  onLaneScroll(requestedPage, state) {
+    return this.fetchLine(state, requestedPage).then(({items}) => {
+      return items.map(task => {
+        return {
+          ...task,
+          label: task.state,
+          title: task.name
+        };
+      });
+    });
+  }
+
+  handleDragEnd = (cardId, sourceLaneId, targetLaneId) => {
+    const state_event = this.lanesMapping()[targetLaneId].state_event;
+    fetch(
+      'PUT',
+      Routes.api_v1_task_path(cardId, { task: { state_event } }),
+    ).then(() => {
+      this.loadLine(sourceLaneId);
+      this.loadLine(targetLaneId);
+    });
+  };
+
   render() {
+    const components = {
+      LaneHeader: LaneHeader
+    }
     return <div>
       <h1>Your tasks</h1>
       <Board
         data={this.getBoard()}
+        onLaneScroll={this.onLaneScroll}
+        components={components}
+        cardsMeta={this.state}
+        draggable
+        laneDraggable={false}
+        handleDragEnd={this.handleDragEnd}
       />
     </div>;
   }
