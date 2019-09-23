@@ -12,11 +12,11 @@ class ActiveSupport::TestCase
 end
 
 module SignInHelper
-  def sign_in_as(admin)
+  def sign_in_as(user)
     post session_path, params: {
       session: {
-        password: admin.password,
-        email: admin.email
+        password: user.password,
+        email: user.email
       }
     }
   end
