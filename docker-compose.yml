@@ -8,9 +8,10 @@ services:
       - .:/task_manager:cached
     ports:
       - 3000:3000
+      - 3035:3035
     volumes_from:
       - bundle_cache
-    command: bash -c "bundle exec rails s -b '0.0.0.0' -p 3000"
+    command: bash -c 'bundle exec foreman start'
     environment:
       BUNDLE_PATH: /bundle_cache
       DATABASE_HOST: db
