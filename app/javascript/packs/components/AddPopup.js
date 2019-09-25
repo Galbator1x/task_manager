@@ -24,15 +24,18 @@ export default class AddPopup extends Component {
   }
 
   handleCardAdd = () => {
+    const { name, description, assignee } = this.state;
+    const { onClose } = this.props;
+
     fetch('POST', window.Routes.api_v1_tasks_path(), {
       task: {
-        name: this.state.name,
-        description: this.state.description,
-        assignee_id: this.state.assignee.id
+        name: name,
+        description: description,
+        assignee_id: assignee.id
       }
     }).then(response => {
     if (response.statusText == 'Created') {
-        this.props.onClose(true);
+        onClose(true);
       } else {
         alert(response.status + ' - ' + response.statusText);
       }
@@ -40,8 +43,11 @@ export default class AddPopup extends Component {
   }
 
   render () {
+    const { name, description, assignee } = this.state;
+    const { show, onClose } = this.props;
+
     return <div>
-      <Modal show={this.props.show} onHide={this.props.onClose} animation={false}>
+      <Modal show={show} onHide={onClose} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>
             New task
@@ -54,7 +60,7 @@ export default class AddPopup extends Component {
               <FormLabel>Task name:</FormLabel>
               <FormControl
                 type="text"
-                value={this.state.name}
+                value={name}
                 placeholder='Set the name for the task'
                 onChange={this.handleNameChange}
               />
@@ -63,7 +69,7 @@ export default class AddPopup extends Component {
               <FormLabel>Task description:</FormLabel>
               <FormControl
                 type="textarea"
-                value={this.state.description}
+                value={description}
                 placeholder='Set the description for the task'
                 onChange={this.handleDecriptionChange}
               />
@@ -72,7 +78,7 @@ export default class AddPopup extends Component {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button onClick={this.props.onClose}>Close</Button>
+          <Button onClick={onClose}>Close</Button>
           <Button bsStyle="primary" onClick={this.handleCardAdd}>Save changes</Button>
         </Modal.Footer>
       </Modal>

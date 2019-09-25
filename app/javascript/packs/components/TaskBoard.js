@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import { fetch } from './Fetch';
 import LaneHeader from './LaneHeader';
 import AddPopup from './AddPopup';
+import EditPopup from './EditPopup';
 
 export default class TasksBoard extends Component {
   state = {
@@ -17,7 +18,9 @@ export default class TasksBoard extends Component {
       released: null,
       archived: null,
     },
-    addPopupShow: false
+    addPopupShow: false,
+    editPopupShow: false,
+    editCardId: null
   }
 
   lanesMapping() {
@@ -121,10 +124,38 @@ export default class TasksBoard extends Component {
     };
   }
 
+  onCardClick = (cardId) => {
+    this.setState({editCardId: cardId});
+    this.handleEditShow();
+  }
+
+  handleEditClose = (edited = '') => {
+    this.setState({ editPopupShow: false, editCardId: null});
+    switch (edited) {
+      case 'new_task':
+      case 'in_development':
+      case 'in_qa':
+      case 'in_code_review':
+      case 'ready_for_release':
+      case 'released':
+      case 'archived':
+        this.loadLine(edited);
+        break;
+      default:
+        break;
+    }
+  }
+
+  handleEditShow = () => {
+    this.setState({ editPopupShow: true });
+  }
+
   render() {
+    const { addPopupShow, editPopupShow, editCardId } = this.state;
     const components = {
       LaneHeader: LaneHeader
     }
+
     return <div>
       <h1>Your tasks</h1>
       <Button bsStyle="primary" onClick={this.handleAddShow}>Create new task</Button>
@@ -136,10 +167,16 @@ export default class TasksBoard extends Component {
         draggable
         laneDraggable={false}
         handleDragEnd={this.handleDragEnd}
+        onCardClick={this.onCardClick}
       />
       <AddPopup
-        show={this.state.addPopupShow}
+        show={addPopupShow}
         onClose={this.handleAddClose}
+      />
+      <EditPopup
+        show = {editPopupShow}
+        onClose={this.handleEditClose}
+        cardId ={editCardId}
       />
     </div>;
   }
