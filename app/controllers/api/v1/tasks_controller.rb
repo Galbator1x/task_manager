@@ -10,7 +10,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
     json = {
       items: tasks,
-      meta: build_meta(tasks),
+      meta: build_meta_tasks(tasks),
       each_serializer: TaskSerializer
     }
 
