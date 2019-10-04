@@ -11,7 +11,7 @@ services:
       - 3035:3035
     volumes_from:
       - bundle_cache
-    command: bash -c 'bundle exec foreman start'
+    command: bash -c 'bin/webpack-dev-server --watch & bundle exec rails s -b "0.0.0.0" -p 3000'
     environment:
       BUNDLE_PATH: /bundle_cache
       DATABASE_HOST: db
