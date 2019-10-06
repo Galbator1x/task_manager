@@ -1,6 +1,14 @@
 import React from 'react';
-import { Modal, Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
-import { fetch } from './Fetch';
+import {
+  Modal,
+  Button,
+  FormGroup,
+  FormLabel,
+  FormControl,
+} from 'react-bootstrap';
+import Routes from 'Routes';
+
+import Fetch from './Fetch';
 
 export default class EditPopup extends React.Component {
   state = {
@@ -11,90 +19,75 @@ export default class EditPopup extends React.Component {
       state: null,
       author: {
         id: null,
-        first_name: null,
-        last_name: null,
-        email: null
+        firstName: null,
+        lastName: null,
+        email: null,
       },
-      assignee: {
-        id: null,
-        first_name: null,
-        last_name:  null,
-        email: null
-      }
     },
     isLoading: true,
-  }
+  };
 
-  loadCard = (cardId) => {
+  loadCard = cardId => {
     this.setState({ isLoading: true });
-    fetch('GET', window.Routes.api_v1_task_path(cardId, {format: 'json'})).then(({data}) => {
-      this.setState({ task: data});
+    Fetch.get(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(({ data }) => {
+      this.setState({ task: data });
       this.setState({ isLoading: false });
     });
-  }
+  };
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     const { cardId } = this.props;
     if (cardId != null && cardId !== prevProps.cardId) {
       this.loadCard(cardId);
-    };
+    }
   }
 
-  handleNameChange = (e) => {
+  handleNameChange = ({ target: { value } }) => {
     const { task } = this.state;
-    this.setState({ task: { ...task, name: e.target.value }});
-  }
+    this.setState({ task: { ...task, name: value } });
+  };
 
-  handleDecriptionChange = (e) => {
+  handleDecriptionChange = ({ target: { value } }) => {
     const { task } = this.state;
-    this.setState({ task: { ...task, description: e.target.value }});
-  }
+    this.setState({ task: { ...task, description: value } });
+  };
 
   handleCardEdit = () => {
     const {
-      task: {
-        name,
-        description,
-        author,
-        assignee,
-        state
-      }
+      task: { name, description, author, state },
     } = this.state;
     const { cardId, onClose } = this.props;
 
-    fetch('PUT', window.Routes.api_v1_task_path(cardId, {format: 'json'}), {
+    Fetch.put(Routes.apiV1TaskPath(cardId, { format: 'json' }), {
       name,
       description,
-      author_id: author.id,
-      assignee_id: null,
+      authorId: author.id,
       state,
-    }).then( response => {
+    }).then(response => {
       if (response.statusText == 'OK') {
         onClose(state);
-      }
-      else {
-        alert('Update failed! ' + response.status + ' - ' + response.statusText);
+      } else {
+        alert(`Update failed! ${response.status} - ${response.statusText}`);
       }
     });
-  }
+  };
 
   handleCardDelete = () => {
-    const { task: { state } } = this.state
+    const {
+      task: { state },
+    } = this.state;
     const { cardId, onClose } = this.props;
 
-    fetch('DELETE', window.Routes.api_v1_task_path(cardId, { format: 'json' }))
-      .then( response => {
-        console.log(response)
-        if (response.statusText == 'OK') {
-          onClose(state);
-        }
-        else {
-          alert('DELETE failed! ' + response.status + ' - ' + response.statusText);
-        }
-      });
-  }
+    Fetch.delete(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(response => {
+      if (response.statusText == 'OK') {
+        onClose(state);
+      } else {
+        alert(`DELETE failed! ${response.status} - ${response.statusText}`);
+      }
+    });
+  };
 
-  render () {
+  render() {
     const { onClose, show } = this.props;
     const {
       isLoading,
@@ -103,10 +96,7 @@ export default class EditPopup extends React.Component {
         state,
         description,
         name,
-        author: {
-          first_name,
-          last_name,
-        },
+        author: { firstName, lastName },
       },
     } = this.state;
 
@@ -114,18 +104,14 @@ export default class EditPopup extends React.Component {
       return (
         <Modal show={show} onHide={onClose} animation={false}>
           <Modal.Header closeButton>
-            <Modal.Title>
-              Info
-            </Modal.Title>
+            <Modal.Title>Info</Modal.Title>
           </Modal.Header>
-           <Modal.Body>
-            Your task is loading. Please be patient.
-          </Modal.Body>
-           <Modal.Footer>
+          <Modal.Body>Your task is loading. Please be patient.</Modal.Body>
+          <Modal.Footer>
             <Button onClick={onClose}>Close</Button>
           </Modal.Footer>
         </Modal>
-      )
+      );
     }
     return (
       <div>
@@ -157,16 +143,18 @@ export default class EditPopup extends React.Component {
                 />
               </FormGroup>
             </form>
-            Author: {first_name} {last_name}
+            Author: {firstName} {lastName}
           </Modal.Body>
 
           <Modal.Footer>
             <Button bsStyle='danger' onClick={this.handleCardDelete}>Delete</Button>
             <Button onClick={onClose}>Close</Button>
-            <Button bsStyle='primary' onClick={this.handleCardEdit}>Save changes</Button>
+            <Button bsStyle='primary' onClick={this.handleCardEdit}>
+              Save changes
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>
-    )
+    );
   }
 }
