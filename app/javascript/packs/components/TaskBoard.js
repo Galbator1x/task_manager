@@ -21,19 +21,18 @@ export default class TasksBoard extends Component {
       archived: null,
     },
     addPopupShow: false,
-    editPopupShow: false,
     editCardId: null,
   };
 
   lanesMapping() {
     return {
-      'newTask': { id: 'new_task', name: 'New', state_event: '' },
-      'inDevelopment': { id: 'in_development', name: 'In Dev', state_event: 'to_development' },
-      'inQa': { id: 'in_qa', name: 'In QA', state_event: 'to_qa' },
-      'inCodeReview': { id: 'in_code_review', name: 'in CR', state_event: 'to_code_review' },
-      'readyForRelease': { id: 'ready_for_release', name: 'Ready for release', state_event: 'to_ready_for_release' },
-      'released': { id: 'released', name: 'Released', state_event: 'release' },
-      'archived': { id: 'archived', name: 'Archived', state_event: 'archive' },
+      'newTask': { state: 'new_task', name: 'New', state_event: '' },
+      'inDevelopment': { state: 'in_development', name: 'In Dev', state_event: 'to_development' },
+      'inQa': { state: 'in_qa', name: 'In QA', state_event: 'to_qa' },
+      'inCodeReview': { state: 'in_code_review', name: 'in CR', state_event: 'to_code_review' },
+      'readyForRelease': { state: 'ready_for_release', name: 'Ready for release', state_event: 'to_ready_for_release' },
+      'released': { state: 'released', name: 'Released', state_event: 'release' },
+      'archived': { state: 'archived', name: 'Archived', state_event: 'archive' },
     }
   }
 
@@ -55,17 +54,17 @@ export default class TasksBoard extends Component {
   }
 
   getBoard() {
-    const { lanesMapping } = this;
-    const lanes = Object.keys(lanesMapping()).map(key =>
-      this.generateLane(lanesMapping()[key].id, lanesMapping()[key].name),
+    const lanesMap = this.lanesMapping();
+    const lanes = Object.keys(lanesMap).map(key =>
+      this.generateLane(lanesMap[key].state, lanesMap[key].name),
     );
     return { lanes };
   }
 
   loadLines() {
-    const { lanesMapping } = this;
-    const lanes = Object.keys(lanesMapping()).map(key =>
-      this.loadLine(lanesMapping()[key].id),
+    const lanesMap = this.lanesMapping();
+    const lanes = Object.keys(lanesMap).map(key =>
+      this.loadLine(lanesMap[key].state),
     );
   }
 
@@ -123,28 +122,26 @@ export default class TasksBoard extends Component {
   handleAddClose = (added = false) => {
     this.setState({ addPopupShow: false });
     if (added == true) {
-      this.loadLine('newTask');
+      this.loadLine(this.lanesMapping()['newTask'].state);
     }
   };
 
   onCardClick = cardId => {
     this.setState({ editCardId: cardId });
-    this.handleEditShow();
   };
 
   handleEditClose = (edited = '') => {
-    this.setState({ editPopupShow: false, editCardId: null });
-    if (Object.keys(this.lanesMapping()).includes(edited)) {
+    this.setState({ editCardId: null });
+    const lanesMap = this.lanesMapping();
+    const states = Object.keys(lanesMap).map(key => lanesMap[key].state);
+    if (states.includes(edited)) {
       this.loadLine(edited);
     }
   };
 
-  handleEditShow = () => {
-    this.setState({ editPopupShow: true });
-  };
-
   render() {
-    const { addPopupShow, editPopupShow, editCardId } = this.state;
+    const { addPopupShow, editCardId } = this.state;
+    const editPopupShow = editCardId !== null;
     const components = {
       LaneHeader: LaneHeader,
     };
@@ -165,12 +162,16 @@ export default class TasksBoard extends Component {
           handleDragEnd={this.handleDragEnd}
           onCardClick={this.onCardClick}
         />
-        <AddPopup show={addPopupShow} onClose={this.handleAddClose} />
-        <EditPopup
-          show={editPopupShow}
-          onClose={this.handleEditClose}
-          cardId={editCardId}
-        />
+        {addPopupShow && (
+          <AddPopup show={addPopupShow} onClose={this.handleAddClose} />
+        )}
+        {editPopupShow && (
+          <EditPopup
+            show={editPopupShow}
+            onClose={this.handleEditClose}
+            cardId={editCardId}
+          />
+        )}
       </div>
     );
   }

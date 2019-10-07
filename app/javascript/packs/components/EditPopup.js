@@ -29,15 +29,16 @@ export default class EditPopup extends React.Component {
 
   loadCard = cardId => {
     this.setState({ isLoading: true });
-    Fetch.get(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(({ data }) => {
-      this.setState({ task: data });
-      this.setState({ isLoading: false });
-    });
+    Fetch.get(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(
+      ({ data }) => {
+        this.setState({ task: data, isLoading: false });
+      },
+    );
   };
 
-  componentDidUpdate(prevProps) {
+  componentDidMount() {
     const { cardId } = this.props;
-    if (cardId != null && cardId !== prevProps.cardId) {
+    if (cardId != null) {
       this.loadCard(cardId);
     }
   }
@@ -64,7 +65,7 @@ export default class EditPopup extends React.Component {
       authorId: author.id,
       state,
     }).then(response => {
-      if (response.statusText == 'OK') {
+      if (response.status.toString().startsWith('2')) {
         onClose(state);
       } else {
         alert(`Update failed! ${response.status} - ${response.statusText}`);
@@ -78,13 +79,15 @@ export default class EditPopup extends React.Component {
     } = this.state;
     const { cardId, onClose } = this.props;
 
-    Fetch.delete(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(response => {
-      if (response.statusText == 'OK') {
-        onClose(state);
-      } else {
-        alert(`DELETE failed! ${response.status} - ${response.statusText}`);
-      }
-    });
+    Fetch.delete(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(
+      response => {
+        if (response.status.toString().startsWith('2')) {
+          onClose(state);
+        } else {
+          alert(`DELETE failed! ${response.status} - ${response.statusText}`);
+        }
+      },
+    );
   };
 
   render() {
