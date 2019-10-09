@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { camelize } from 'humps';
 import Board from 'react-trello';
 import { Button } from 'react-bootstrap';
 import Routes from 'Routes';
@@ -26,13 +27,13 @@ export default class TasksBoard extends Component {
 
   lanesMapping() {
     return {
-      'newTask': { state: 'new_task', name: 'New', state_event: '' },
-      'inDevelopment': { state: 'in_development', name: 'In Dev', state_event: 'to_development' },
-      'inQa': { state: 'in_qa', name: 'In QA', state_event: 'to_qa' },
-      'inCodeReview': { state: 'in_code_review', name: 'in CR', state_event: 'to_code_review' },
-      'readyForRelease': { state: 'ready_for_release', name: 'Ready for release', state_event: 'to_ready_for_release' },
-      'released': { state: 'released', name: 'Released', state_event: 'release' },
-      'archived': { state: 'archived', name: 'Archived', state_event: 'archive' },
+      'newTask': { state: 'new_task', name: 'New', stateEvent: '' },
+      'inDevelopment': { state: 'in_development', name: 'In Dev', stateEvent: 'to_development' },
+      'inQa': { state: 'in_qa', name: 'In QA', stateEvent: 'to_qa' },
+      'inCodeReview': { state: 'in_code_review', name: 'in CR', stateEvent: 'to_code_review' },
+      'readyForRelease': { state: 'ready_for_release', name: 'Ready for release', stateEvent: 'to_ready_for_release' },
+      'released': { state: 'released', name: 'Released', stateEvent: 'release' },
+      'archived': { state: 'archived', name: 'Archived', stateEvent: 'archive' },
     }
   }
 
@@ -106,13 +107,13 @@ export default class TasksBoard extends Component {
   }
 
   handleDragEnd = (cardId, sourceLaneId, targetLaneId) => {
-    const stateEvent = this.lanesMapping()[targetLaneId].stateEvent;
-    Fetch.put(Routes.apiV1TaskPath(cardId, { task: { stateEvent } })).then(
-      () => {
-        this.loadLine(sourceLaneId);
-        this.loadLine(targetLaneId);
-      },
-    );
+    const stateEvent = this.lanesMapping()[camelize(targetLaneId)].stateEvent;
+    Fetch.put(
+      Routes.apiV1TaskPath(cardId, { task: { state_event: stateEvent } }),
+    ).then(() => {
+      this.loadLine(sourceLaneId);
+      this.loadLine(targetLaneId);
+    });
   };
 
   handleAddShow = () => {
