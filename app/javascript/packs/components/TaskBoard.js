@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { camelize } from 'humps';
+import { cloneDeep } from 'lodash';
 import Board from 'react-trello';
 import { Button } from 'react-bootstrap';
 import Routes from 'Routes';
 
-import { decamelize } from 'utils/keysConverter';
-import Fetch from './Fetch';
 import LaneHeader from './LaneHeader';
 import AddPopup from './AddPopup';
 import EditPopup from './EditPopup';
+import TaskRepository from 'repositories/TaskRepository';
 
 export default class TasksBoard extends Component {
   state = {
@@ -38,7 +38,7 @@ export default class TasksBoard extends Component {
   }
 
   generateLane(id, title) {
-    const tasks = this.state[id];
+    const tasks = cloneDeep(this.state[id]);
 
     return {
       id,
@@ -80,16 +80,12 @@ export default class TasksBoard extends Component {
   }
 
   fetchLine(state, page = 1) {
-    return Fetch.get(
-      Routes.apiV1TasksPath(
-        decamelize({
-          q: { stateEq: state },
-          page: page,
-          perPage: 10,
-          format: 'json',
-        }),
-      ),
-    ).then(({ data }) => {
+    return TaskRepository.getTasks({
+      q: { stateEq: state },
+      page: page,
+      perPage: 10,
+      format: 'json',
+    }).then(({ data }) => {
       return data;
     });
   }
@@ -108,9 +104,9 @@ export default class TasksBoard extends Component {
 
   handleDragEnd = (cardId, sourceLaneId, targetLaneId) => {
     const stateEvent = this.lanesMapping()[camelize(targetLaneId)].stateEvent;
-    Fetch.put(
-      Routes.apiV1TaskPath(cardId, { task: { state_event: stateEvent } }),
-    ).then(() => {
+    TaskRepository.updateTask(cardId, {
+      task: { stateEvent },
+    }).then(() => {
       this.loadLine(sourceLaneId);
       this.loadLine(targetLaneId);
     });

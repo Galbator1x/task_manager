@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { camelize, decamelize } from 'utils/keysConverter';
+import { camelize, decamelize } from './keysConverter';
 
 export default {
   authenticityToken() {

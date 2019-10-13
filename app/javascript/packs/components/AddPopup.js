@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 import Routes from 'Routes';
 
-import Fetch from './Fetch';
+import TaskRepository from 'repositories/TaskRepository';
 
 export default class AddPopup extends Component {
   state = {
@@ -28,18 +28,18 @@ export default class AddPopup extends Component {
     const { name, description } = this.state;
     const { onClose } = this.props;
 
-    Fetch.post(Routes.apiV1TasksPath(), {
+    TaskRepository.createTask({
       task: {
         name: name,
         description: description,
       },
-    }).then(response => {
-      if (response.statusText == 'Created') {
+    })
+      .then(response => {
         onClose(true);
-      } else {
-        alert(`${response.status} - ${response.statusText}`);
-      }
-    });
+      })
+      .catch(error => {
+        alert(error);
+      });
   };
 
   render() {

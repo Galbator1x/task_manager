@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 import Routes from 'Routes';
 
-import Fetch from './Fetch';
+import TaskRepository from 'repositories/TaskRepository';
 
 export default class EditPopup extends React.Component {
   state = {
@@ -29,11 +29,9 @@ export default class EditPopup extends React.Component {
 
   loadCard = cardId => {
     this.setState({ isLoading: true });
-    Fetch.get(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(
-      ({ data }) => {
-        this.setState({ task: data, isLoading: false });
-      },
-    );
+    TaskRepository.getTask(cardId).then(({ data }) => {
+      this.setState({ task: data, isLoading: false });
+    });
   };
 
   componentDidMount() {
@@ -59,18 +57,18 @@ export default class EditPopup extends React.Component {
     } = this.state;
     const { cardId, onClose } = this.props;
 
-    Fetch.put(Routes.apiV1TaskPath(cardId, { format: 'json' }), {
+    TaskRepository.updateTask(cardId, {
       name,
       description,
       authorId: author.id,
       state,
-    }).then(response => {
-      if (response.status.toString().startsWith('2')) {
+    })
+      .then(response => {
         onClose(state);
-      } else {
-        alert(`Update failed! ${response.status} - ${response.statusText}`);
-      }
-    });
+      })
+      .catch(error => {
+        alert(`Update failed! ${error}`);
+      });
   };
 
   handleCardDelete = () => {
@@ -79,15 +77,13 @@ export default class EditPopup extends React.Component {
     } = this.state;
     const { cardId, onClose } = this.props;
 
-    Fetch.delete(Routes.apiV1TaskPath(cardId, { format: 'json' })).then(
-      response => {
-        if (response.status.toString().startsWith('2')) {
-          onClose(state);
-        } else {
-          alert(`DELETE failed! ${response.status} - ${response.statusText}`);
-        }
-      },
-    );
+    TaskRepository.deleteTask(cardId)
+      .then(response => {
+        onClose(state);
+      })
+      .catch(error => {
+        alert(`DELETE failed! ${error}`);
+      });
   };
 
   render() {
