@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { camelize } from 'humps';
-import { cloneDeep } from 'lodash';
 import Board from 'react-trello';
 import { Button } from 'react-bootstrap';
 import Routes from 'Routes';
@@ -38,7 +37,7 @@ export default class TasksBoard extends Component {
   }
 
   generateLane(id, title) {
-    const tasks = cloneDeep(this.state[id]);
+    const tasks = this.state[id];
 
     return {
       id,
