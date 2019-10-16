@@ -31,10 +31,6 @@ export default class UserSelect extends Component {
     return inputValue;
   };
 
-  componentDidMount() {
-    this.loadOptions();
-  }
-
   render() {
     return (
       <div>
