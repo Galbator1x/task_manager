@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import Routes from 'Routes';
 
+import UserSelect from './UserSelect';
 import TaskRepository from 'repositories/TaskRepository';
 
 export default class EditPopup extends React.Component {
@@ -18,6 +19,12 @@ export default class EditPopup extends React.Component {
       description: '',
       state: null,
       author: {
+        id: null,
+        firstName: null,
+        lastName: null,
+        email: null,
+      },
+      assignee: {
         id: null,
         firstName: null,
         lastName: null,
@@ -53,7 +60,7 @@ export default class EditPopup extends React.Component {
 
   handleCardEdit = () => {
     const {
-      task: { name, description, author, state },
+      task: { name, description, author, assignee, state },
     } = this.state;
     const { cardId, onClose } = this.props;
 
@@ -61,6 +68,7 @@ export default class EditPopup extends React.Component {
       name,
       description,
       authorId: author.id,
+      assigneeId: assignee.id,
       state,
     })
       .then(response => {
@@ -84,6 +92,11 @@ export default class EditPopup extends React.Component {
       .catch(error => {
         alert(`DELETE failed! ${error}`);
       });
+  };
+
+  handleAssigneeChange = value => {
+    const { task } = this.state;
+    this.setState({ task: { ...task, assignee: value } });
   };
 
   render() {
@@ -141,8 +154,20 @@ export default class EditPopup extends React.Component {
                   onChange={this.handleDecriptionChange}
                 />
               </FormGroup>
+
+              <FormGroup controlId='formAuthor'>
+                <FormLabel>Author</FormLabel>
+                <UserSelect id="Author" isDisabled value={this.state.task.author} />
+              </FormGroup>
+              <FormGroup controlId='formAssignee'>
+                <FormLabel>Assignee</FormLabel>
+                <UserSelect
+                  id="Assignee"
+                  onChange={this.handleAssigneeChange}
+                  value={this.state.task.assignee}
+                />
+              </FormGroup>
             </form>
-            Author: {firstName} {lastName}
           </Modal.Body>
 
           <Modal.Footer>

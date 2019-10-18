@@ -8,12 +8,19 @@ import {
 } from 'react-bootstrap';
 import Routes from 'Routes';
 
+import UserSelect from './UserSelect';
 import TaskRepository from 'repositories/TaskRepository';
 
 export default class AddPopup extends Component {
   state = {
     name: '',
     description: '',
+    assignee: {
+      id: null,
+      firstName: null,
+      lastName: null,
+      email: null,
+    },
   };
 
   handleNameChange = ({ target: { value } }) => {
@@ -24,14 +31,19 @@ export default class AddPopup extends Component {
     this.setState({ description: value });
   };
 
+  handleAssigneeChange = value => {
+    this.setState({ assignee: value });
+  };
+
   handleCardAdd = () => {
-    const { name, description } = this.state;
+    const { name, description, assignee } = this.state;
     const { onClose } = this.props;
 
     TaskRepository.createTask({
       task: {
         name: name,
         description: description,
+        assigneeId: assignee.id,
       },
     })
       .then(response => {
@@ -43,7 +55,7 @@ export default class AddPopup extends Component {
   };
 
   render() {
-    const { name, description } = this.state;
+    const { name, description, assignee } = this.state;
     const { show, onClose } = this.props;
 
     return (
@@ -71,6 +83,14 @@ export default class AddPopup extends Component {
                   value={description}
                   placeholder="Set the description for the task"
                   onChange={this.handleDecriptionChange}
+                />
+              </FormGroup>
+              <FormGroup controlId="formAssignee">
+                <FormLabel>Assignee</FormLabel>
+                <UserSelect
+                  id="Assignee"
+                  onChange={this.handleAssigneeChange}
+                  value={assignee}
                 />
               </FormGroup>
             </form>
