@@ -10,7 +10,7 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
     json = {
       items: tasks,
-      meta: build_meta(tasks),
+      meta: build_meta_tasks(tasks),
       each_serializer: TaskSerializer
     }
 
@@ -24,13 +24,13 @@ class Api::V1::TasksController < Api::V1::ApplicationController
 
   def create
     task = current_user.my_tasks.create(task_params)
-    respond_with task, location: nil
+    respond_with task, serializer: TaskSerializer, location: nil
   end
 
   def update
     task = Task.find(params[:id])
     task.update(task_params)
-    respond_with task, location: nil
+    respond_with task, serializer: TaskSerializer, location: nil
   end
 
   def destroy
